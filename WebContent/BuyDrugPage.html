@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Drug Shop</title>
+<link href="StyleSignRegistration.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<link href='http://fonts.googleapis.com/css?family=Oswald'
+		rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans'
+		rel='stylesheet' type='text/css'>
+	<h1>Choose Drug</h1>
+	<ul>
+		<li><div id="login" class="account"></div></li>
+		<li><a id="logout" class="account" href="index.html">Log Out</a></li>
+	</ul>
+	<br>
+
+	<b><em>We reserve the right to change this policy at any time.
+			If we change our privacy policy we will post the changes on this
+			website, and where appropriate notify you. Please check back
+			frequently to see any updates or changes to our privacy policy. The
+			most recent version of this policy is reflected by the date located
+			at the bottom of this policy.</em></b>
+	<br>
+	<br>
+
+	<script>
+		document.write("<hr />");
+	</script>
+
+	<div id="listOfDrugs">
+		<div class="row">
+			<div class="col">
+				<e>Name</e>
+			</div>
+			<div class="col">
+				<e>Description</e>
+			</div>
+			<div class="col">
+				<e>Price per kilo</e>
+			</div>
+			<div class="col">
+				<e>Choose the drug</e>
+			</div>
+		</div>
+	</div>
+	<script src="materialize/js/jquery-3.1.1.js"></script>
+	<script>
+		$.ajax({
+			method : "post",
+			url : "ServletConnection",
+			data : {
+				getLoginSession : ''
+			},
+			success : function(data) {
+				login = $.parseJSON(data);
+				console.log(login);
+				$("#login").text(login);
+			}
+		});
+		$.ajax({
+			method : "post",
+			url : "ServletConnection",
+			data : {
+				getListOfDrugs : ''
+			},
+			success : function(data) {
+				drugs = $.parseJSON(data);
+				console.log(drugs);
+				showAllDrugs(drugs);
+			}
+		});
+		function showAllDrugs(drugs) {
+			for (var i = 0; i < drugs.length; i++) {
+				newItem(drugs[i]);
+			}
+		}
+
+		function newItem(item) {
+			var row = $('<div/>', {
+				class : 'row'
+			});
+			var col1 = $('<div/>', {
+				class : 'col'
+			});
+			var col2 = $('<div/>', {
+				class : 'col'
+			});
+			var col3 = $('<div/>', {
+				class : 'col'
+			});
+			var col4 = $('<div/>', {
+				class : 'col'
+			});
+
+			var p1 = $('<e/>', {
+				text : item.drug_name
+			});
+			var p2 = $('<e/>', {
+				text : item.description
+			});
+			var p3 = $('<e/>', {
+				text : item.price_per_kilo
+			});
+
+			var b1 = $('<input/>', {
+				type : "submit",
+				value : "Choose",
+				class : "Choose",
+				text : "Choose",
+				click : function() {
+					var id = item.id_drugtype;
+					console.log(id);
+						$.ajax({
+							method : "post",
+							url : "ServletConnection",
+							data : {
+								openClientDrugSession : id
+							},
+							success : function(data) {
+								console.log(data);
+								if (data == '"openClientDrugSession"') {
+									window.location.replace("OrderBatch.html");
+								}
+								$("#errorMessages").html("not"+data);
+							}
+						});
+
+					
+				}
+			});
+			col1.append(p1);
+			col2.append(p2);
+			col3.append(p3);
+			col4.append(b1);
+			row.append(col1);
+			row.append(col2);
+			row.append(col3);
+			row.append(col4);
+			$("#listOfDrugs").append(row);
+		}
+		
+		$("#logout").click(function() {
+			$.ajax({
+				method : "post",
+				url : "ServletConnection",
+				data : {
+					logout : ""
+				},
+				success : function(data) {
+					console.log(data);
+					if (data == '"ok"') {
+						window.location.replace("index.html");
+					}
+					$("#errorMessages").html(data);
+				}
+			});
+
+		});
+
+	</script>
+
+
+</body>
+</html>

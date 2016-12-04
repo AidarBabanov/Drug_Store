@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="StyleSignRegistration.css" rel="stylesheet" type="text/css" />
+<script src="materialize/js/jquery-3.1.1.js"></script>
+</head>
+<body>
+	<link href='http://fonts.googleapis.com/css?family=Oswald'
+		rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans'
+		rel='stylesheet' type='text/css'>
+		<div id ="center">
+	<div class="wrapper">
+
+		<h1>Sign In</h1>
+		<div id="errorMessages"></div>
+		<p>
+			To sign-in as a <u>client</u> enter your login and password.
+		</p>
+		<script>
+      document.write(" <hr />");
+    </script>
+		<input id="username" type="text" class="name" placeholder="Login">
+		<div>
+			<p class="name-help">Please enter your login.</p>
+		</div>
+		<input id="password" type="password" class="password"
+			placeholder="Password"> <input id="signin" type="submit"
+			class="submit" value="Sign In">
+	</div>
+	<img src="https://cdn2.iconfinder.com/data/icons/health-care-6/512/drug_dealer-512.png">
+</div>
+	<p class="optimize">DataBase Systems Project!</p>
+	<script>
+		$("#signin").click(function() {
+			var username = $("#username").val();
+			var password = $("#password").val();
+			var message = ["client", username, password ];
+			console.log(message);
+			$.ajax({
+				method : "post",
+				url : "ServletConnection",
+				data : {
+					signin : message
+				},
+				success : function(data) {
+					console.log(data);
+					if (data == '"ok"') {
+						window.location.replace("BuyDrugPage.html");
+					}
+					$("#errorMessages").html(data);
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>

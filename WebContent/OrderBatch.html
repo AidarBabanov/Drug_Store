@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="StyleSignRegistration.css" rel="stylesheet" type="text/css" />
+<title>Drug Shop</title>
+<div id ="center">
+<h1>Drug Batch</h1>
+</head>
+<body>
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<script>
+document.write (" <hr />");
+
+</script>
+	<ul>
+		<li><div id="login" class="account"></div></li>
+		<li><a id="logout" class="account" href="index.html">Log Out</a></li>
+	</ul>
+	<h4 id="batchname" class="whitetext"></h4>
+	<div id="errorMessages"></div>
+	<br>
+	<b>Weight:</b>
+	<input id="weight" type="text" name="number">
+	<br>
+	<b>Total Price:</b>
+	<span><span id="totalprice"></span>$</span>
+	<br>
+	<b>Payment Type:</b>
+	<SELECT id="payment" NAME="Payment">
+		<OPTION VALUE="halyk" SELECTED>Halyk Bank</OPTION>
+		<OPTION VALUE="visa">Visa</OPTION>
+		<OPTION VALUE="cash">Cash</OPTION>
+		<OPTION VALUE="qiwi">Qiwi Wallet</OPTION>
+		<OPTION VALUE="web">Web Money</OPTION>
+	</SELECT>
+	<br>
+	<b>Address:</b>
+	<input id="address" type="text" name="address">
+	<br>
+	<input id="register" type="submit" class="submit" value="buy">
+</body>
+<img src="https://cdn4.iconfinder.com/data/icons/medical-business/512/shopping-512.png">
+</div>
+<script src="materialize/js/jquery-3.1.1.js"></script>
+<script>
+	var info;
+	$.ajax({
+		method : "post",
+		url : "ServletConnection",
+		data : {
+			getClientDrugSession : ''
+		},
+		success : function(data) {
+			info = $.parseJSON(data);
+			console.log(info);
+			$("#login").text(info[4]);
+			$("#batchname").text(info[1]);
+		}
+	});
+
+	$("#register").click(
+			function() {
+				var weight = $("#weight").val();
+				if (weight == "") {
+					$("#errorMessages").html("Please Enter Weight");
+					return;
+				}
+
+				var address = $("#address").val();
+				if (address == "") {
+					$("#errorMessages").html("Please Enter Address");
+					return;
+				}
+
+				var totalprice = $("#totalprice").text();
+
+				var message = [ weight, info[4], info[0],
+						$("#payment option:selected").text(), totalprice,
+						address ];
+				JSON.stringify(message);
+				console.log(message);
+
+				$.ajax({
+					method : "post",
+					url : "ServletConnection",
+					data : {
+						addBatch : message
+					},
+					success : function(data) {
+						console.log("I handled your response");
+						console.log(data);
+
+						$("#errorMessages").html(data);
+						if (data == '"Registered"') {
+							window.location.replace("BatchAdded.html");
+						}
+					}
+				});
+			});
+</script>
+<script>
+	$("#weight").keyup(function() {
+		var p = $("#weight").val();
+		p = p * info[3];
+		if (isNaN(p)) {
+			$("#errorMessages").text("Enter the number");
+			console.log("Enter the number");
+		} else {
+			$("#errorMessages").text("");
+			$("#totalprice").text(p);
+		}
+	});
+</script>
+<script>
+	$("#register").click(function() {
+
+	});
+</script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<link href="StyleSignRegistration.css" rel="stylesheet" type="text/css" />
+<script src="materialize/js/jquery-3.1.1.js"></script>
+</head>
+<body>
+	<link href='http://fonts.googleapis.com/css?family=Oswald'
+		rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans'
+		rel='stylesheet' type='text/css'>
+		<div id="center">
+	<div class="wrapper">
+		<h1>Register For An Account</h1>
+		<p>Something blah blah blah.</p>
+		<div id="errorMessages" ></div>
+		<script>
+			document.write(" <hr />");
+		</script>
+		<form action="">
+			<a> POSITION: <input id="client" type="radio" name="pos"
+				value="client"> client <input id="creator" type="radio"
+				name="pos" value="creator"> creator<br> <br>
+			</a> <a id="words"> Choose your specialization: </a> <SELECT id="spec">
+
+
+			</SELECT> <br> <br>
+		</form>
+		<input id="name" type="text" class="login" placeholder="Firstname">
+		<input id="login" type="text" class="login" placeholder="Login">
+		<div>
+			<p class="name-help">Please enter your first and last name.</p>
+		</div>
+		<input id="password1" type="password" class="password"
+			placeholder="Password"> <input id="password2" type="password"
+			class="password" placeholder="Re-enter your Password"> <input
+			id="signup" type="submit" class="submit" value="Register">
+
+	</div>
+	<img src="https://narcotrade.com/wp-content/uploads/2016/06/icon3-300x300.png">
+</div>
+	<p class="optimize">Database Systems Project!</p>
+</body>
+<script>
+	$("#signup").click(function() {
+		var name = $("#name").val();
+		var login = $("#login").val();
+		var password1 = $("#password1").val();
+		var password2 = $("#password2").val();
+		var cl_cr = $("input[name=pos]:checked").val();
+		var specialization = $("#spec").val();
+
+		if (password1 != password2) {
+			$("#errorMessages").html("Please Enter Password Correctly");
+			return;
+		}
+		var message = [ cl_cr, login, password1, name, specialization ];
+		JSON.stringify(message);
+		console.log(message);
+
+		$.ajax({
+			method : "post",
+			url : "ServletConnection",
+			data : {
+				signup : message
+			},
+			success : function(data) {
+				console.log("I handled your response");
+				console.log(data);
+
+				$("#errorMessages").html(data);
+				if (data == '"Signed Up Succesfully!"') {
+					window.location.replace("WelcomePage.html");
+				}
+			}
+		});
+	});
+</script>
+<script>
+	$(function() {
+
+		$("#spec").hide();
+		$("#words").hide();
+
+		$('#creator').on('click', function() {
+			$('#spec').slideDown(10);
+		});
+
+		$('#client').on('click', function() {
+			$('#spec').hide(10);
+		});
+
+		$('#creator').on('click', function() {
+			$('#words').slideDown(10);
+		});
+
+		$('#client').on('click', function() {
+			$('#words').hide(10);
+		});
+
+	});
+	function createOptions(options) {
+		var sel = $('#spec');
+		sel.empty();
+		$(options).each(
+				function() {
+					sel.append($("<option>").attr('value', this.id_drugtype)
+							.text(this.drug_name));
+				});
+	}
+	var options = [];
+	$.ajax({
+		method : "post",
+		url : "ServletConnection",
+		data : {
+			getListOfDrugs : ""
+		},
+		success : function(data) {
+			options = JSON.parse(data);
+			console.log("I handled your response");
+			console.log(options);
+			createOptions(options);
+		}
+	});
+</script>
+
+
+</html>
